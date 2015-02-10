@@ -10,16 +10,16 @@ public class AurPkgChecker {
 		
 		/* init new hashmap to hold the installed packages */
 		HashMap<String, String> myInstalledPackages =
-				new HashMap<String, String>(myHandler.getInstalledPkgVersions());
-	
+				new HashMap<String, String>(
+						myHandler.getInstalledPkgVersions());
+		
 		System.out.println("myInstalledPackages: " + myInstalledPackages);
 		
 		/* init new hashmap to hold the latest packages */
 		HashMap<String, String> myLatestPackages =
-				new HashMap<String, String>(myHandler.getLatestPkgVersions());
-	
-		System.out.println("myLatestPackages: " + myLatestPackages);
+				new HashMap<String, String>(
+						myHandler.getLatestPkgVersions(myInstalledPackages));
 		
-		myHandler.getLatestVersionFromAur("blueman");
+		System.out.println("myLatestPackages: " + myLatestPackages);
 	}
 }

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +17,7 @@ public class AurHandler {
 	/* read the current list of installed package versions */
 	HashMap<String, String> getInstalledPkgVersions() {
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("foobar", "1.0.1");
+		map.put("otf-font-awesome", "4.2.0-1");
 		return map;
 	}
 	
@@ -52,16 +53,20 @@ public class AurHandler {
 				"^.*Package Details: " + pkgName + " ([^\"]*)</h2>");
 		Matcher matcher = exp.matcher(html.toString());
 		if (matcher.find()) {
-			System.out.println("Matcher: '" + matcher.group(1) + "'");
+			/* return parsed version as string */
+			return matcher.group(1).toString();
+		} else {
+			return "not-found";
 		}
-		/* return parsed version as string */
-		return matcher.group(1).toString();
 	}
 
 	/* read the latest versions for a list of packages */
-	HashMap<String, String> getLatestPkgVersions() {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("foobar", "1.0.1");
-		return map;
+	HashMap<String, String> getLatestPkgVersions(HashMap<String, String> pkgList) {
+		/* iterate given hashmap */
+		for (Map.Entry<String, String> entry: pkgList.entrySet()) {
+			String name = entry.getKey(); /* read current name */
+			pkgList.put(name, getLatestVersionFromAur(name)); /* update version */
+		}
+		return pkgList; /* return updated list with latest versions */
 	}
 }
