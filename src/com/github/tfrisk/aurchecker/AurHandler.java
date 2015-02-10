@@ -14,47 +14,22 @@ public class AurHandler {
 	/* AUR package base URL */
 	private static String baseUrl = "https://aur.archlinux.org/packages/";
 	
-	private String executeCmd(String command) {
-		StringBuffer output = new StringBuffer();
-		
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-			BufferedReader reader =
-					new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line = "";
-			while ((line = reader.readLine()) != null) {
-				output.append(line + "\n");
-			}
-			p.destroy();
-			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return output.toString();
-	}
-	
 	/* convert from raw pacman output string to HashMap */
 	/* pretty hacky stuff, does not utilize modern java syntaxes */
-	HashMap<String, String> convertStringToMap(String input) {
+	HashMap<String, AurVersion> convertStringToMap(String input) {
 		String lines[] = input.split("\n");
-		HashMap<String, String> map = new HashMap<>();
+		HashMap<String, AurVersion> map = new HashMap<>();
 		for (int i=0; i<lines.length; i++) {
 			String[] pair = lines[i].split(" ");
-			map.put(pair[0], pair[1]);
+			map.put(pair[0], new AurVersion(pair[1]));
 		}
 		return map;
 	}
 	
 	/* read the current list of installed package versions */
-	HashMap<String, String> getInstalledPkgVersions() {
+	HashMap<String, AurVersion> getInstalledPkgVersions() {
 		/* read pacman */
-		String pacmanRaw = executeCmd("pacman -Qm");
+		String pacmanRaw = ExecuteCmd.executeCmd("pacman -Qm");
 		
 		return convertStringToMap(pacmanRaw);
 	}
@@ -82,7 +57,7 @@ public class AurHandler {
 	}
 
 	/* read the latest version for one package */
-	String getLatestVersionFromAur(String pkgName) {
+	AurVersion getLatestVersionFromAur(String pkgName) {
 		StringBuilder html = new StringBuilder();
 		html = readRawHtmlFromAur(pkgName);
 		
@@ -92,16 +67,16 @@ public class AurHandler {
 		Matcher matcher = exp.matcher(html.toString());
 		if (matcher.find()) {
 			/* return parsed version as string */
-			return matcher.group(1).toString();
+			return new AurVersion(matcher.group(1).toString());
 		} else {
-			return "not-found";
+			return new AurVersion("0.0.0");
 		}
 	}
 
 	/* read the latest versions for a list of packages */
-	HashMap<String, String> getLatestPkgVersions(HashMap<String, String> pkgList) {
+	HashMap<String, AurVersion> getLatestPkgVersions(HashMap<String, AurVersion> pkgList) {
 		/* iterate given hashmap */
-		for (Map.Entry<String, String> entry: pkgList.entrySet()) {
+		for (Map.Entry<String, AurVersion> entry: pkgList.entrySet()) {
 			String name = entry.getKey(); /* read current name */
 			pkgList.put(name, getLatestVersionFromAur(name)); /* update version */
 		}

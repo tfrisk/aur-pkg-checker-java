@@ -9,16 +9,14 @@ public class AurPkgChecker {
 		AurHandler myHandler = new AurHandler();
 		
 		/* init new hashmap to hold the installed packages */
-		HashMap<String, String> myInstalledPackages =
-				new HashMap<String, String>(
-						myHandler.getInstalledPkgVersions());
+		HashMap<String, AurVersion> myInstalledPackages =
+				myHandler.getInstalledPkgVersions();
 		
 		System.out.println("myInstalledPackages: " + myInstalledPackages);
 		
 		/* init new hashmap to hold the latest packages */
-		HashMap<String, String> myLatestPackages =
-				new HashMap<String, String>(
-						myHandler.getLatestPkgVersions(myInstalledPackages));
+		HashMap<String, AurVersion> myLatestPackages =
+				myHandler.getLatestPkgVersions(myInstalledPackages);
 		
 		System.out.println("myLatestPackages: " + myLatestPackages);
 	}
