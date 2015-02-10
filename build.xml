@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     10.2.2015 19.19.08                                                        
+
+     aur-pkg-checker-java    
+     Arch Linux User Repository version checker
+                   
+     Copyright (C) 2015 Teemu Frisk
+     ====================================================================== -->
+<project name="aur-pkg-checker-java" default="makejar">
+    <description>
+    	Arch Linux User Repository version checker
+    </description>
+
+    <!-- ================================= 
+          target: makejar
+         ================================= -->
+    <target name="makejar" description="Create jar">
+        <jar
+        	destfile="AurPkgChecker.jar"
+        	includes="**/*.class"
+        	basedir="bin"
+        	manifest="manifest.mf"
+        />
+    </target>
+
+</project>
