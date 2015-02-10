@@ -14,11 +14,49 @@ public class AurHandler {
 	/* AUR package base URL */
 	private static String baseUrl = "https://aur.archlinux.org/packages/";
 	
+	private String executeCmd(String command) {
+		StringBuffer output = new StringBuffer();
+		
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(command);
+			p.waitFor();
+			BufferedReader reader =
+					new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+			p.destroy();
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return output.toString();
+	}
+	
+	/* convert from raw pacman output string to HashMap */
+	/* pretty hacky stuff, does not utilize modern java syntaxes */
+	HashMap<String, String> convertStringToMap(String input) {
+		String lines[] = input.split("\n");
+		HashMap<String, String> map = new HashMap<>();
+		for (int i=0; i<lines.length; i++) {
+			String[] pair = lines[i].split(" ");
+			map.put(pair[0], pair[1]);
+		}
+		return map;
+	}
+	
 	/* read the current list of installed package versions */
 	HashMap<String, String> getInstalledPkgVersions() {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("otf-font-awesome", "4.2.0-1");
-		return map;
+		/* read pacman */
+		String pacmanRaw = executeCmd("pacman -Qm");
+		
+		return convertStringToMap(pacmanRaw);
 	}
 	
 	/* read raw html from AUR */
