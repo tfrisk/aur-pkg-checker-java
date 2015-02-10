@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,11 +14,11 @@ public class AurHandler {
 	/* AUR package base URL */
 	private static String baseUrl = "https://aur.archlinux.org/packages/";
 	
-	/* convert from raw pacman output string to HashMap */
+	/* convert from raw pacman output string to TreeMap */
 	/* pretty hacky stuff, does not utilize modern java syntaxes */
-	HashMap<String, AurVersion> convertStringToMap(String input) {
+	TreeMap<String, AurVersion> convertStringToMap(String input) {
 		String lines[] = input.split("\n");
-		HashMap<String, AurVersion> map = new HashMap<>();
+		TreeMap<String, AurVersion> map = new TreeMap<>();
 		for (int i=0; i<lines.length; i++) {
 			String[] pair = lines[i].split(" ");
 			map.put(pair[0], new AurVersion(pair[1]));
@@ -27,7 +27,7 @@ public class AurHandler {
 	}
 	
 	/* read the current list of installed package versions */
-	HashMap<String, AurVersion> getInstalledPkgVersions() {
+	TreeMap<String, AurVersion> getInstalledPkgVersions() {
 		/* read pacman */
 		String pacmanRaw = ExecuteCmd.executeCmd("pacman -Qm");
 		
@@ -74,12 +74,13 @@ public class AurHandler {
 	}
 
 	/* read the latest versions for a list of packages */
-	HashMap<String, AurVersion> getLatestPkgVersions(HashMap<String, AurVersion> pkgList) {
-		/* iterate given hashmap */
+	TreeMap<String, AurVersion> getLatestPkgVersions(TreeMap<String, AurVersion> pkgList) {
+		TreeMap<String, AurVersion> latest = new TreeMap<>();
+		/* iterate given map */
 		for (Map.Entry<String, AurVersion> entry: pkgList.entrySet()) {
 			String name = entry.getKey(); /* read current name */
-			pkgList.put(name, getLatestVersionFromAur(name)); /* update version */
+			latest.put(name, getLatestVersionFromAur(name)); /* update version */
 		}
-		return pkgList; /* return updated list with latest versions */
+		return latest; /* return map with latest versions */
 	}
 }
