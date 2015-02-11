@@ -2,7 +2,7 @@ package com.github.tfrisk.aurchecker;
 
 /* Arch version number, do comparison with external vercmp command */
 public class AurVersion implements Comparable<AurVersion> {
-	String version;
+	private String version;
 	
 	public AurVersion(String version) {
 		this.version = version;

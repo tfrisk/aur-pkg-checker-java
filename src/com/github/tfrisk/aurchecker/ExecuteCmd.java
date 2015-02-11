@@ -21,8 +21,7 @@ public class ExecuteCmd {
 			p.destroy();
 			reader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error: Could not run command '" + command +"'");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
