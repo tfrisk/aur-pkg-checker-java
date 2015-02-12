@@ -11,7 +11,6 @@
     <description>
     	Arch Linux User Repository version checker
     </description>
-
     <!-- ================================= 
           target: makejar
          ================================= -->
@@ -20,8 +19,9 @@
         	destfile="AurPkgChecker.jar"
         	includes="**/*.class"
         	basedir="bin"
-        	manifest="manifest.mf"
-        />
+            manifest="manifest.mf">
+            <zipgroupfileset includes="*.jar" dir="lib"/>
+        </jar>
     </target>
 
 </project>

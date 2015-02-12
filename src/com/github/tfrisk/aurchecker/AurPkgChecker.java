@@ -5,9 +5,21 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.beust.jcommander.JCommander;
+
 public class AurPkgChecker {
 
 	public static void main(String[] args) {
+		/* command line parameter parsing */
+		CmdlineParser cmdParser = new CmdlineParser();
+		JCommander jc = new JCommander(cmdParser, args);
+		jc.setProgramName("aur-pkg-checker-java");
+
+		if (cmdParser.help_only) {
+			jc.usage();
+			System.exit(0);
+		}
+
 		/* initialize new AurHandler */
 		AurHandler myHandler = new AurHandler();
 		
@@ -35,7 +47,10 @@ public class AurPkgChecker {
 				statusline = statusline.concat("OK");
 			} else if (current.compareTo(latest) < 0) {
 				statusline = statusline.concat("new version available: " + latest);
-				myHandler.downloadTarball(name); /* download updated packages */
+				/* download updated packages if not in check-only mode */
+				if (!cmdParser.check_only) {
+					myHandler.downloadTarball(name);
+				}
 			} else if (current.compareTo(latest) > 0) {
 				statusline = statusline.concat("newer version installed: " + latest);
 			}
