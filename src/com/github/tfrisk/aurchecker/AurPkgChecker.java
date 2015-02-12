@@ -35,6 +35,7 @@ public class AurPkgChecker {
 				statusline = statusline.concat("OK");
 			} else if (current.compareTo(latest) < 0) {
 				statusline = statusline.concat("new version available: " + latest);
+				myHandler.downloadTarball(name); /* download updated packages */
 			} else if (current.compareTo(latest) > 0) {
 				statusline = statusline.concat("newer version installed: " + latest);
 			}

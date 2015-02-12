@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 public class AurHandler {
 	/* AUR package base URL */
 	private static String baseUrl = "https://aur.archlinux.org/packages/";
+	private static final String tmpDir = System.getProperty("user.dir") + "/build";
 	
 	/* convert from raw pacman output string to TreeMap */
 	/* pretty hacky stuff, does not utilize modern java syntaxes */
@@ -82,5 +83,15 @@ public class AurHandler {
 			latest.put(name, getLatestVersionFromAur(name)); /* update version */
 		}
 		return latest; /* return map with latest versions */
+	}
+
+	/* download latest version tarballs to tmpDir */
+	void downloadTarball(String pkgname) {
+		String tarballUrl = baseUrl +
+	            pkgname.substring(0, 2) + "/" +
+				pkgname + "/" +
+				pkgname + ".tar.gz";
+		System.out.println("Downloading " + tarballUrl);
+		ExecuteCmd.executeCmd("wget " + tarballUrl + " -O " + tmpDir + "/" + pkgname + ".tar.gz");
 	}
 }
